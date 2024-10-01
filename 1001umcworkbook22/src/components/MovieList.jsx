@@ -52,19 +52,22 @@ const MovieTitle = styled.h3`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 `;
 
+// https://image.tmdb.org/t/p/w500은 TMDB의 이미지 URL 기본 경로
+// movies.js에서 제공하는 상대 경로를 ${movie.poster_path}에 넣어 map을 돌림
+
 const MovieList = () => {
-    return (
-        <MoviesContainer>
-            {MOVIES.results.map((movie) => (
-                <MovieCard key={movie.id}>
-                    <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
-                    <Overlay className="overlay">
-                        <MovieTitle>{movie.title}</MovieTitle>
-                    </Overlay>
-                </MovieCard>
-            ))}
-        </MoviesContainer>
-    );
+  return (
+    <MoviesContainer>
+      {MOVIES.results.map((movie) => (
+        <MovieCard key={movie.id}>
+          <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+          <Overlay className="overlay">
+            <MovieTitle>{movie.title}</MovieTitle>
+          </Overlay>
+        </MovieCard>
+      ))}
+    </MoviesContainer>
+  );
 };
 
 export default MovieList;
