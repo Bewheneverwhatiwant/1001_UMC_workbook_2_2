@@ -12,7 +12,6 @@ const MoviesContainer = styled.div`
   width: 100%; 
   box-sizing: border-box;
   overflow-x: hidden;
-  margin-top: 5vh;
 `;
 
 const MovieCard = styled.div`

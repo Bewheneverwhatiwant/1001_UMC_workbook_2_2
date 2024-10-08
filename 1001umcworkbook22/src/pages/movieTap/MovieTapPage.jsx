@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from "axios";
 import CustomFont from '../../components/CommonComponents/CustomFont';
-import CustomCenter from '../../components/CommonComponents/CustomCenter';
-import CustomBox from '../../components/CommonComponents/CustomBox';
 import CustomColumn from '../../components/CommonComponents/CustomColumn';
 import CustomRow from '../../components/CommonComponents/CustomRow';
 import CustomButton from '../../components/CommonComponents/CustomButton';
+import { loadMoviesFromServer, compareAndUpdateMovies } from './utils/movieTapUtils';
 
 const MoviesContainer = styled.div`
   display: grid;
@@ -36,8 +34,7 @@ const MovieImage = styled.img`
   height: 100%;
   object-fit: cover;
   z-index: 100;
-  
-  opacity: 40;
+  opacity: 0;
   transition: opacity 0.5s ease-in-out;
   
   &.loaded {
@@ -69,52 +66,40 @@ const MovieTitle = styled.h3`
 
 const MovieTapPage = () => {
     const [movies, setMovies] = useState([]);
-    const [category, setCategory] = useState('카테고리');
-    const [initialState, setInitialState] = useState(true);
+    const [category, setCategory] = useState('현재 상영 중인');
 
-    const fetchMovies = async (endpoint) => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_SERVER}${endpoint}?language=en-US&page=1`, {
-                headers: {
-                    Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-                }
-            });
-            setMovies(response.data.results);
-        } catch (error) {
-            console.error('영화 데이터를 가져오는 중 오류 발생:', error);
-        }
-    };
+    useEffect(() => {
+        // 초기 로딩 시 무조건 서버로부터 '현재 상영 중인' 영화 데이터를 받아온다
+        loadMoviesFromServer('now_playing', setMovies);
+        setCategory('현재 상영 중인');
+
+        // 60초마다 서버 데이터와 캐시를 비교하여 업데이트
+        const interval = setInterval(() => {
+            compareAndUpdateMovies('now_playing', setMovies);
+        }, 60000);
+
+        return () => clearInterval(interval); // 컴포넌트 언마운트 시 interval 정리
+    }, []);
 
     const handleCategoryChange = (endpoint, label) => {
         setCategory(label);
-        setInitialState(false);
-        fetchMovies(endpoint);
-    };
-
-    const handleReset = () => {
-        setCategory('카테고리');
-        setMovies([]);
-        setInitialState(true);
+        loadMoviesFromServer(endpoint, setMovies); // 버튼 클릭 시 서버로부터 데이터를 받아온다
     };
 
     return (
         <CustomColumn width='100%'>
             <CustomFont color='white' font='2rem'>
-                {category}
+                {category} 영화
             </CustomFont>
-            {!initialState && (
-                <CustomButton backgroundColor='white' onClick={handleReset} width='7%' height='5vh'>
-                    <CustomFont color='black' font='1rem'>처음으로</CustomFont>
-                </CustomButton>
-            )}
             <CustomRow width='100%' justifyContent='flex-start' gap='1rem' margin='1rem 0'>
                 <CustomButton
                     backgroundColor='yellow'
                     width='25%'
                     height='10vh'
-                    justifyContent='flex-start'
-                    alignItems='flex-end'
+                    justifyContent='flex-end'
+                    alignItems='flex-start'
                     onClick={() => handleCategoryChange('now_playing', '현재 상영 중인')}
+                    style={{ opacity: category === '현재 상영 중인' ? 1 : 0.5 }}
                 >
                     <CustomFont color='black' font='1rem'>현재 상영 중인</CustomFont>
                 </CustomButton>
@@ -123,9 +108,10 @@ const MovieTapPage = () => {
                     backgroundColor='green'
                     width='25%'
                     height='10vh'
-                    justifyContent='flex-start'
-                    alignItems='flex-end'
+                    justifyContent='flex-end'
+                    alignItems='flex-start'
                     onClick={() => handleCategoryChange('popular', '인기있는')}
+                    style={{ opacity: category === '인기있는' ? 1 : 0.5 }}
                 >
                     <CustomFont color='black' font='1rem'>인기있는</CustomFont>
                 </CustomButton>
@@ -134,9 +120,10 @@ const MovieTapPage = () => {
                     backgroundColor='skyblue'
                     width='25%'
                     height='10vh'
-                    justifyContent='flex-start'
-                    alignItems='flex-end'
+                    justifyContent='flex-end'
+                    alignItems='flex-start'
                     onClick={() => handleCategoryChange('top_rated', '높은 평가를 받은')}
+                    style={{ opacity: category === '높은 평가를 받은' ? 1 : 0.5 }}
                 >
                     <CustomFont color='black' font='1rem'>높은 평가를 받은</CustomFont>
                 </CustomButton>
@@ -145,9 +132,10 @@ const MovieTapPage = () => {
                     backgroundColor='pink'
                     width='25%'
                     height='10vh'
-                    justifyContent='flex-start'
-                    alignItems='flex-end'
+                    justifyContent='flex-end'
+                    alignItems='flex-start'
                     onClick={() => handleCategoryChange('upcoming', '개봉 예정인')}
+                    style={{ opacity: category === '개봉 예정인' ? 1 : 0.5 }}
                 >
                     <CustomFont color='black' font='1rem'>개봉 예정인</CustomFont>
                 </CustomButton>
@@ -156,7 +144,11 @@ const MovieTapPage = () => {
             <MoviesContainer>
                 {movies.map((movie) => (
                     <MovieCard key={movie.id}>
-                        <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`} alt={movie.title} />
+                        <MovieImage
+                            src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+                            alt={movie.title}
+                            onLoad={(e) => e.target.classList.add('loaded')}
+                        />
                         <Overlay className="overlay">
                             <MovieTitle>{movie.title}</MovieTitle>
                         </Overlay>

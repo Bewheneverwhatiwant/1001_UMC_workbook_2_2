@@ -20,6 +20,7 @@ const Main = styled.main`
     flex: 1;
     margin-left: 15rem;
     background-color: black;
+    padding-top: 8vh;
 `;
 
 const Layout = () => {
