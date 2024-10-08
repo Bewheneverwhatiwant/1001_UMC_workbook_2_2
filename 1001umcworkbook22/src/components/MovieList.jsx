@@ -31,6 +31,14 @@ const MovieImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 100;
+
+  opacity: 40;
+  transition: opacity 0.5s ease-in-out;
+  
+  &.loaded {
+    opacity: 1;
+  }
 `;
 
 const Overlay = styled.div`
