@@ -19,6 +19,7 @@ const Main = styled.main`
     flex-direcion: column; 
     flex: 1;
     margin-left: 15rem;
+    background-color: black;
 `;
 
 const Layout = () => {

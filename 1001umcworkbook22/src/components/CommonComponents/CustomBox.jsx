@@ -20,6 +20,8 @@ const CustomBox = styled.div`
 
   border-radius: ${(props) => props.borderRadius || '0.5rem'};
   padding: ${(props) => props.padding || '0.5rem'};
+
+  opacity: ${props => props.opacity || '0'};
 `;
 
 export default CustomBox;

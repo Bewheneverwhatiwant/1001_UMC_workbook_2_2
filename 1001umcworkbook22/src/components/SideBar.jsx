@@ -9,6 +9,7 @@ import CustomBox from './CommonComponents/CustomBox';
 import CustomFont from './CommonComponents/CustomFont';
 
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { MdMovieFilter } from "react-icons/md";
 
 const SideBarContainer = styled.div`
     width: 15rem;
@@ -30,6 +31,14 @@ const SideBar = () => {
         navigate('/');
     }
 
+    const GoMovieTap = () => {
+        navigate('/movietappage');
+    }
+
+    const GoSearchTap = () => {
+        navigate('/searchtappage');
+    }
+
     return (
         <SideBarContainer>
 
@@ -40,17 +49,25 @@ const SideBar = () => {
                     </CustomFont>
                 </CustomButton>
 
-                <CustomRow width='80%' alignItems='center' justifyContent='flex-start' gap='0.5rem'>
+                <CustomRow width='100%' alignItems='center' justifyContent='flex-start' gap='0.5rem'>
 
-                    <CustomButton width='100%' backgroundColor='transparent' hoverColor='#282D31'>
-                        <CustomFont color='white' font='1rem'>찾기</CustomFont>
+                    <CustomButton flexdirection='row' justifyContent='space-between' width='100%'
+                        backgroundColor='transparent' hoverColor='#282D31' onClick={GoSearchTap}>
+                        <CustomRow width='60%'>
+                            <FaMagnifyingGlass style={{ color: 'white', fontSize: '1rem' }} />
+                            <CustomFont color='white' font='1rem'>찾기</CustomFont>
+                        </CustomRow>
                     </CustomButton>
                 </CustomRow>
 
-                <CustomRow width='80%' alignItems='center' justifyContent='flex-start' gap='0.5rem'>
+                <CustomRow width='100%' alignItems='center' justifyContent='flex-start' gap='0.5rem'>
 
-                    <CustomButton width='100%' backgroundColor='transparent' hoverColor='#282D31'>
-                        <CustomFont color='white' font='1rem'>영화</CustomFont>
+                    <CustomButton flexdirection='row' justifyContent='space-between' width='100%'
+                        backgroundColor='transparent' hoverColor='#282D31' onClick={GoMovieTap}>
+                        <CustomRow width='60%'>
+                            <MdMovieFilter style={{ color: 'white', fontSize: '1rem' }} />
+                            <CustomFont color='white' font='1rem'>영화</CustomFont>
+                        </CustomRow>
                     </CustomButton>
                 </CustomRow>
             </CustomColumn>

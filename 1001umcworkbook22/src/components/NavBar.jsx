@@ -21,8 +21,12 @@ const HeaderContainer = styled.header`
 export default function Header() {
     const navigate = useNavigate();
 
-    const GoMain = () => {
-        navigate('/');
+    const GoLogin = () => {
+        navigate('/loginpage');
+    }
+
+    const GoSignup = () => {
+        navigate('/signuppage');
     }
 
     return (
@@ -31,13 +35,13 @@ export default function Header() {
                 <CustomRow width='85%' justifyContent='flex-end'>
 
                     <CustomRow width='30%' justifyContent='center'>
-                        <CustomButton backgroundColor='transparent' hoverColor='#F93062'>
+                        <CustomButton backgroundColor='transparent' hoverColor='#F93062' onClick={GoLogin}>
                             <CustomFont color='white' font='1rem'>
                                 로그인
                             </CustomFont>
                         </CustomButton>
 
-                        <CustomButton backgroundColor='#F93062'>
+                        <CustomButton backgroundColor='#F93062' onClick={GoSignup}>
                             <CustomFont color='white' font='1rem'>
                                 회원가입
                             </CustomFont>

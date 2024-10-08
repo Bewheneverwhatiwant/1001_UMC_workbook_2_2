@@ -8,6 +8,7 @@ const CustomColumn = styled.div`
   gap: ${props => props.gap || '30px'};
   align-items: ${props => props.alignItems || 'flex-start'};
   justify-content: ${props => props.justifyContent || 'flex-start'};
+  padding: ${props => props.padding || '0.5rem'};
 `;
 
 export default CustomColumn;
