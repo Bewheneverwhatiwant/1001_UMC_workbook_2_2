@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { MOVIES } from '../mocks/movies';
+import CustomBox from './CommonComponents/CustomBox';
 
 const MoviesContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
   padding: 20px;
-  width: 100vw; 
+  width: 100%; 
   box-sizing: border-box;
   overflow-x: hidden;
+  margin-top: 5vh;
 `;
 
 const MovieCard = styled.div`
@@ -57,16 +59,18 @@ const MovieTitle = styled.h3`
 
 const MovieList = () => {
   return (
-    <MoviesContainer>
-      {MOVIES.results.map((movie) => (
-        <MovieCard key={movie.id}>
-          <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
-          <Overlay className="overlay">
-            <MovieTitle>{movie.title}</MovieTitle>
-          </Overlay>
-        </MovieCard>
-      ))}
-    </MoviesContainer>
+    <CustomBox backgroundColor='black' width='100%' minHeight='100vh' borderRadius='0'>
+      <MoviesContainer>
+        {MOVIES.results.map((movie) => (
+          <MovieCard key={movie.id}>
+            <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+            <Overlay className="overlay">
+              <MovieTitle>{movie.title}</MovieTitle>
+            </Overlay>
+          </MovieCard>
+        ))}
+      </MoviesContainer>
+    </CustomBox>
   );
 };
 
