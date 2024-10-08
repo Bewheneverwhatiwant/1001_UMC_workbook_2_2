@@ -16,10 +16,10 @@ const HomePage = () => {
   }, []);
 
   return (
-    <CustomColumn width='100%'>
-      <CustomRow width='100%' justifyContent='center'>
+    <CustomColumn width='100%' alignItems='center' gap='0.5rem'>
+      <CustomRow width='97%' justifyContent='flex-start'>
 
-        <CustomFont color='white' font='1.5rem' fontWeight='bold'>
+        <CustomFont color='white' font='2rem'>
           {randomSentence}
         </CustomFont>
 
