@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from "axios";
-import { MOVIES } from '../mocks/movies';
-import CustomBox from './CommonComponents/CustomBox';
+import { MOVIES } from '../../mocks/movies';
+import CustomBox from '../../components/CommonComponents/CustomBox';
 
 const MoviesContainer = styled.div`
   display: grid;
