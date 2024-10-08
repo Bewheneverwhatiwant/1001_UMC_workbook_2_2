@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from "axios";
 import { MOVIES } from '../mocks/movies';
 import CustomBox from './CommonComponents/CustomBox';
 
@@ -54,16 +55,35 @@ const MovieTitle = styled.h3`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 `;
 
-// https://image.tmdb.org/t/p/w500은 TMDB의 이미지 URL 기본 경로
-// movies.js에서 제공하는 상대 경로를 ${movie.poster_path}에 넣어 map을 돌림
-
 const MovieList = () => {
+
+  const [movies, setMovies] = useState([])
+
+  useEffect(() => {
+    const getMovies = async () => {
+      try {
+        const movies = await axios.get(`${import.meta.env.VITE_SERVER}popular?language=en-US&page=1`, {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+          }
+        })
+        setMovies(movies);
+
+        console.log(movies.data);
+      }
+      catch (error) {
+        console.error('영화데이터 오류 발생:', error);
+      }
+    }
+    getMovies()
+  }, []);
+
   return (
     <CustomBox backgroundColor='black' width='100%' minHeight='100vh' borderRadius='0'>
       <MoviesContainer>
-        {MOVIES.results.map((movie) => (
+        {movies.data?.results.map((movie) => (
           <MovieCard key={movie.id}>
-            <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+            <MovieImage src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`} alt={movie.title} />
             <Overlay className="overlay">
               <MovieTitle>{movie.title}</MovieTitle>
             </Overlay>
