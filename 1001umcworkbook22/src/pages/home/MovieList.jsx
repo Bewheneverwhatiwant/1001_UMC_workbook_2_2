@@ -1,8 +1,9 @@
+// components/MovieList.js
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from "axios";
 import CustomBox from '../../components/CommonComponents/CustomBox';
 import CustomColumn from '../../components/CommonComponents/CustomColumn';
+import { getMovies, getMovieDetails } from './movieService';
 
 const MoviesContainer = styled.div`
   display: grid;
@@ -99,35 +100,21 @@ const MovieList = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
-    const getMovies = async () => {
+    const fetchMovies = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_SERVER}popular?language=en-US&page=1`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-            }
-          }
-        );
-        setMovies(response.data.results);
+        const moviesData = await getMovies();
+        setMovies(moviesData);
       } catch (error) {
-        console.error('영화 데이터 오류 발생:', error);
+        console.error('영화 데이터 가져오기 오류:', error);
       }
     };
-    getMovies();
+    fetchMovies();
   }, []);
 
   const handleMovieClick = async (movieId) => {
     try {
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movieId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-          }
-        }
-      );
-      setSelectedMovie(response.data);
+      const movieDetails = await getMovieDetails(movieId);
+      setSelectedMovie(movieDetails);
     } catch (error) {
       console.error('영화 상세 정보 가져오기 오류:', error);
     }
