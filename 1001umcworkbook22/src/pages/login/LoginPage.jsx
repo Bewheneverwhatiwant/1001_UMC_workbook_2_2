@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import CustomFont from '../../components/CommonComponents/CustomFont';
 import CustomButton from '../../components/CommonComponents/CustomButton';
@@ -10,70 +11,76 @@ const StyledInput = styled.input`
     padding: 0.5rem;
 `;
 
+const StyledForm = styled.form`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+`;
+
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const isFormValid = email && password && !emailError && !passwordError;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
-    const handleEmailChange = (e) => {
-        const value = e.target.value;
-        setEmail(value);
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-            setEmailError('올바른 이메일 형식이 아닙니다.');
-        } else {
-            setEmailError('');
-        }
-    };
-
-    const handlePasswordChange = (e) => {
-        const value = e.target.value;
-        setPassword(value);
-        if (value.length < 8 || value.length > 16) {
-            setPasswordError('비밀번호는 8자리 이상 16자리 이하이어야 합니다.');
-        } else {
-            setPasswordError('');
-        }
+    const onSubmit = (data) => {
+        alert('로그인 성공');
+        console.log(data); // form 데이터 확인용
     };
 
     return (
-
         <CustomColumn width='100%' alignItems='center' justifyContent='center'>
             <CustomFont color='white' font='2rem'>
                 로그인
             </CustomFont>
 
-            <StyledInput
-                type='text'
-                placeholder='이메일을 입력해주세요!'
-                value={email}
-                onChange={handleEmailChange}
-            />
-            {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
+            <StyledForm onSubmit={handleSubmit(onSubmit)}>
+                <StyledInput
+                    type='text'
+                    placeholder='이메일을 입력해주세요!'
+                    {...register('email', {
+                        required: '이메일을 입력해주세요.',
+                        pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: '올바른 이메일 형식이 아닙니다.',
+                        },
+                    })}
+                />
+                {errors.email && <p style={{ color: 'red' }}>{errors.email.message}</p>}
 
+                <StyledInput
+                    type='password'
+                    placeholder='비밀번호를 입력해주세요!'
+                    {...register('password', {
+                        required: '비밀번호를 입력해주세요.',
+                        minLength: {
+                            value: 8,
+                            message: '비밀번호는 8자리 이상이어야 합니다.',
+                        },
+                        maxLength: {
+                            value: 16,
+                            message: '비밀번호는 16자리 이하이어야 합니다.',
+                        },
+                    })}
+                />
+                {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
 
-            <StyledInput
-                type='password'
-                placeholder='비밀번호를 입력해주세요!'
-                value={password}
-                onChange={handlePasswordChange}
-            />
-            {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-
-            <CustomButton
-                width='50%'
-                backgroundColor='#F93062'
-                onClick={() => alert('로그인')}
-                disabled={!isFormValid}
-            >
-                <CustomFont color='white' font='1rem' fontWeight='bold'>
-                    로그인
-                </CustomFont>
-            </CustomButton>
+                <CustomButton
+                    width='50%'
+                    backgroundColor={!errors.email && !errors.password ? '#F93062' : 'gray'}
+                    type='submit'
+                    disabled={!!errors.email || !!errors.password}
+                >
+                    <CustomFont color='white' font='1rem' fontWeight='bold'>
+                        로그인
+                    </CustomFont>
+                </CustomButton>
+            </StyledForm>
         </CustomColumn>
-
     );
 };
 
