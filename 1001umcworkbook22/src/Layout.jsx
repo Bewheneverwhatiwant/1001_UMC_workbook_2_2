@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { AppProvider, useAppContext } from './AppContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import NavBar from './components/NavBar';
 import SideBar from './components/SideBar';
@@ -26,20 +26,24 @@ const Main = styled.main`
 `;
 
 const Layout = () => {
+    // QueryClient 생성
+    const queryClient = new QueryClient();
 
     return (
         <>
             <ResetCss />
-            <AppProvider>
-                <Container>
-                    <SideBar />
-                    <Main>
-                        <NavBar />
-                        <Outlet />
-                    </Main>
+            <QueryClientProvider client={queryClient}>
+                <AppProvider>
+                    <Container>
+                        <SideBar />
+                        <Main>
+                            <NavBar />
+                            <Outlet />
+                        </Main>
 
-                </Container>
-            </AppProvider>
+                    </Container>
+                </AppProvider>
+            </QueryClientProvider>
         </>
     );
 };
