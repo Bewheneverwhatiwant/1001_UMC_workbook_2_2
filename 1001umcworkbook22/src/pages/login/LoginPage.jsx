@@ -1,9 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import CustomFont from '../../components/CommonComponents/CustomFont';
 import CustomButton from '../../components/CommonComponents/CustomButton';
 import CustomColumn from '../../components/CommonComponents/CustomColumn';
+import { useAppContext } from '../../AppContext';
 
 const StyledInput = styled.input`
     width: 50%;
@@ -27,9 +29,35 @@ const LoginPage = () => {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
-        alert('로그인 성공');
-        console.log(data); // form 데이터 확인용
+    const { fetchUser } = useAppContext();
+    const navigate = useNavigate();
+
+    const onSubmit = async (data) => {
+        try {
+            const response = await fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                localStorage.setItem('accessToken', result.accessToken);
+                localStorage.setItem('refreshToken', result.refreshToken);
+
+                await fetchUser(); // 사용자 정보 가져오기
+                alert('로그인 성공');
+                navigate('/');
+            } else {
+                const errorData = await response.json();
+                alert(`로그인 실패: ${errorData.message || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error('로그인 오류:', error);
+            alert('로그인 중 오류가 발생했습니다.');
+        }
     };
 
     return (
