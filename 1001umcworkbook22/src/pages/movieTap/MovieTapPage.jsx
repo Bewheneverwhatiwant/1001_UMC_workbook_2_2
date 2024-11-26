@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import CustomFont from '../../components/CommonComponents/CustomFont';
 import CustomColumn from '../../components/CommonComponents/CustomColumn';
 import CustomRow from '../../components/CommonComponents/CustomRow';
@@ -31,12 +31,39 @@ const MovieImage = styled.img`
   object-fit: cover;
 `;
 
+const LoadMoreButton = styled.button`
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f93062;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #d02b54;
+  }
+`;
+
 const MovieTapPage = () => {
     const [category, setCategory] = useState('now_playing');
 
-    const { data: movies = [], isLoading, isError } = useQuery({
-        queryKey: ['movies', category], // queryKey는 객체 내 배열로 제공
-        queryFn: () => getMoviesByCategory(category), // queryFn에 함수 전달
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
+        queryKey: ['movies', category],
+        queryFn: ({ pageParam = 1 }) =>
+            getMoviesByCategory(category, pageParam),
+        getNextPageParam: (lastPage, allPages) => {
+            // API가 마지막 페이지를 제공하지 않는 경우 allPages.length로 계산
+            return lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined;
+        },
     });
 
     const changeCategory = (newCategory) => {
@@ -74,15 +101,22 @@ const MovieTapPage = () => {
                 </CustomButton>
             </CustomRow>
             <MoviesContainer>
-                {movies.map((movie) => (
-                    <MovieCard key={movie.id}>
-                        <MovieImage
-                            src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
-                            alt={movie.title}
-                        />
-                    </MovieCard>
-                ))}
+                {data.pages.map((page) =>
+                    page.results.map((movie) => (
+                        <MovieCard key={movie.id}>
+                            <MovieImage
+                                src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+                                alt={movie.title}
+                            />
+                        </MovieCard>
+                    ))
+                )}
             </MoviesContainer>
+            {hasNextPage && (
+                <LoadMoreButton onClick={fetchNextPage} disabled={isFetchingNextPage}>
+                    {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+                </LoadMoreButton>
+            )}
         </CustomColumn>
     );
 };
